@@ -12,6 +12,9 @@ If the player manages to get far enough away, it will respawn nearby.
 MsGreen419 and true_iron_killer for testing and feedback
 
 ## Patch Notes
+1.3.1.0
+- Bug fix for spell feature
+
 1.3.0.0
 - Bug fix for Shade music not triggering when expected
 - New features added:

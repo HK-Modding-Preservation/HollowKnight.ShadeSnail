@@ -221,8 +221,9 @@ namespace ShadeSnail
         private static void NoSpells(On.HutongGames.PlayMaker.Actions.SendRandomEvent.orig_OnEnter orig, 
                                         HutongGames.PlayMaker.Actions.SendRandomEvent self)
         {
-            // Only override if spells are disabled
-            if (ShadeSnail.globalSettings.allowSpells)
+            // Only override if spells are disabled and this is the correct shade
+            if (ShadeSnail.globalSettings.allowSpells ||
+                !self.Fsm.GameObjectName.StartsWith(shadeName))
             {
                 orig(self);
                 return;
