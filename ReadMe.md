@@ -1,12 +1,17 @@
 # Shade Snail
 
-Inspired by Aspidnest and the Immortal Snail, this mod creates an immortal copy of the Shade that follows the player and
-tries to hurt them.
+Inspired by Aspidnest and the Immortal Snail, this mod 
+creates an immortal copy of the Shade that follows the 
+player and tries to hurt them.
 
-The Shade Snail, as I call it, ignores Void Heart, 
-can be damaged but not destroyed,
-and always tries to follow the player.
-If the player manages to get far enough away, it will respawn nearby.
+The Shade Snail, as I call it, ignores Void Heart, can 
+be damaged but not destroyed, and always tries to follow
+the player. If the player manages to get far enough 
+away, it will respawn nearby.
+
+The Shade Snail can be toggled via the mod menu. Also,
+you can toggle whether or not the Shade Snail uses 
+spells, and whether or not its attacks are one-hit KO.
 
 ## Special Thanks
 MsGreen419 and true_iron_killer for testing and feedback
