@@ -24,6 +24,16 @@ namespace ShadeSnail
                                                    MenuValues(),
                                                    value => ShadeSnail.globalSettings.spawnShade = Convert.ToBoolean(value),
                                                    () => Convert.ToInt32(ShadeSnail.globalSettings.spawnShade)));
+            menu.AddElement(new HorizontalOption("Allow Spells?",
+                                                   "Shade can use spells",
+                                                   MenuValues(),
+                                                   value => ShadeSnail.globalSettings.allowSpells = Convert.ToBoolean(value),
+                                                   () => Convert.ToInt32(ShadeSnail.globalSettings.allowSpells)));
+            menu.AddElement(new HorizontalOption("One-Hit KO?",
+                                                   "Shade kills instantly",
+                                                   MenuValues(),
+                                                   value => ShadeSnail.globalSettings.fatalShade = Convert.ToBoolean(value),
+                                                   () => Convert.ToInt32(ShadeSnail.globalSettings.fatalShade)));
 
             // Insert the menu into the overall menu
             menuScreen = menu.GetMenuScreen(modListMenu);

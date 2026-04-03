@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GlobalEnums;
+using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
@@ -25,6 +26,8 @@ namespace ShadeSnail
             On.HealthManager.TakeDamage += ImmortalShade;
             On.HutongGames.PlayMaker.Actions.BoolTest.OnEnter += NotFriendly;
             On.HutongGames.PlayMaker.Actions.BoolAllTrue.OnEnter += PursuePlayer;
+            On.HutongGames.PlayMaker.Actions.SendRandomEvent.OnEnter += NoSpells;
+            On.HeroController.TakeDamage += FatalShade;
         }
 
         #region Spawn Shade
@@ -64,13 +67,6 @@ namespace ShadeSnail
                 {
                     DestroyShade();
                 }
-            }
-
-            GameObject shadeMusic = UnityEngine.GameObject.Find("Shade");
-            if (shadeMusic != null)
-            {
-                AudioSource audioSource = shadeMusic.GetComponent<AudioSource>();
-                audioSource.mute = ShadeSnail.globalSettings.spawnShade;
             }
         }
 
@@ -215,6 +211,86 @@ namespace ShadeSnail
             {
                 self.Fsm.Event(self.sendEvent);
             }
+        }
+
+        /// <summary>
+        /// Optional setting to prevent Shade Snail from using spells
+        /// </summary>
+        /// <param name="orig"></param>
+        /// <param name="self"></param>
+        private static void NoSpells(On.HutongGames.PlayMaker.Actions.SendRandomEvent.orig_OnEnter orig, 
+                                        HutongGames.PlayMaker.Actions.SendRandomEvent self)
+        {
+            // Only override if spells are disabled
+            if (ShadeSnail.globalSettings.allowSpells)
+            {
+                orig(self);
+                return;
+            }
+
+            // Check if the given state is one of the ones we need to override
+            bool isQuake = self.Fsm.GameObjectName.StartsWith(shadeName) &&
+                            self.State.Name.Equals("Quake?");
+            bool isScream = self.Fsm.GameObjectName.StartsWith(shadeName) &&
+                            self.State.Name.Equals("Scream?");
+            bool isFireball = self.Fsm.GameObjectName.StartsWith(shadeName) &&
+                                self.State.Name.Equals("Attack Choice");
+            bool isOther = self.Fsm.GameObjectName.StartsWith(shadeName) &&
+                            self.State.Name.Equals("Q Other?");
+
+            if (isQuake ||
+                isScream)
+            {
+                float defaultValue = self.weights[1].Value;
+                self.weights[1] = 0f;
+
+                orig(self);
+                self.weights[1].Value = defaultValue;
+            }
+            else if (isFireball)
+            {
+                float defaultValue = self.weights[0].Value;
+                self.weights[0] = 0f;
+
+                orig(self);
+                self.weights[0].Value = defaultValue;
+            }
+            else if (isOther)
+            {
+                float defaultValue = self.weights[0].Value;
+                float defaultValue1 = self.weights[1].Value;
+                self.weights[0] = 0f;
+                self.weights[1] = 0f;
+
+                orig(self);
+                self.weights[0].Value = defaultValue;
+                self.weights[1].Value = defaultValue1;
+            }
+            else
+            {
+                orig(self);
+            }
+        }
+
+        /// <summary>
+        /// Optional setting for Shade Snail to be fatal
+        /// </summary>
+        /// <param name="orig"></param>
+        /// <param name="self"></param>
+        /// <param name="go"></param>
+        /// <param name="damageSide"></param>
+        /// <param name="damageAmount"></param>
+        /// <param name="hazardType"></param>
+        private static void FatalShade(On.HeroController.orig_TakeDamage orig, HeroController self, GameObject go, 
+                                        CollisionSide damageSide, int damageAmount, int hazardType)
+        {
+            if (go.name.Equals(shadeName) &&
+                ShadeSnail.globalSettings.fatalShade)
+            {
+                damageAmount = 9999;
+            }
+
+            orig(self, go, damageSide, damageAmount, hazardType);
         }
         #endregion
     }
