@@ -68,6 +68,16 @@ namespace ShadeSnail
                     DestroyShade();
                 }
             }
+
+            GameObject shadeMusic = UnityEngine.GameObject.Find("Shade");
+            if (shadeMusic != null)
+            {
+                GameObject regularShade = UnityEngine.Object.FindObjectsOfType<GameObject>()
+                                            .Where(x => x.name.StartsWith("Hollow Shade"))
+                                            .FirstOrDefault();
+                AudioSource audioSource = shadeMusic.GetComponent<AudioSource>();
+                audioSource.mute = regularShade == default;
+            }
         }
 
         /// <summary>
@@ -90,6 +100,7 @@ namespace ShadeSnail
             shadeSnail.name = shadeName;
             //ShadeSnail.Instance.Log($"{shadeSnail.name} spawned at {heroPosition}");
             spawningShade = false;
+            shadeSnail.GetComponent<HealthManager>().hp = 100;
         }
 
         /// <summary>
@@ -158,8 +169,7 @@ namespace ShadeSnail
         {
             if (self.gameObject.name.StartsWith(shadeName))
             {
-                self.hp += hitInstance.DamageDealt + 1;
-                //ShadeSnail.Instance.Log($"Shade hp increased to {self.hp}");
+                hitInstance.DamageDealt = 1;
             }
 
             orig(self, hitInstance);
